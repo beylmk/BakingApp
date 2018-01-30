@@ -12,11 +12,13 @@ public class RecipeStep {
 
     private String description;
 
-    private String videoUrl;
+    private String videoURL;
 
     private String thumbnailUrl;
 
-    public long getId() {
+    private boolean isSelected;
+
+    public int getId() {
         return id;
     }
 
@@ -40,12 +42,12 @@ public class RecipeStep {
         this.description = description;
     }
 
-    public String getVideoUrl() {
-        return videoUrl;
+    public String getVideoURL() {
+        return videoURL;
     }
 
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
+    public void setVideoURL(String videoURL) {
+        this.videoURL = videoURL;
     }
 
     public String getThumbnailUrl() {
@@ -55,4 +57,8 @@ public class RecipeStep {
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
     }
+
+    public boolean isSelected() { return this.isSelected; }
+
+    public void setSelected(boolean selected) { this.isSelected = selected; }
 }

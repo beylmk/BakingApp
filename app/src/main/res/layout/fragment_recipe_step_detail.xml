@@ -6,20 +6,26 @@
         android:orientation="vertical">
 
     <TextView
-            android:id="@+id/short_description_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    <TextView
             android:id="@+id/long_description_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"/>
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/video_player"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="350dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="0dp"
+            android:paddingBottom="10dp"
+            android:layout_marginLeft="0dp"
+            />
 
     <RelativeLayout
             android:id="@+id/navigation_container"
             android:orientation="horizontal"
             android:layout_margin="10dp"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

@@ -102,7 +102,9 @@ public class RecipeGridFragment extends Fragment {
             recipeNameTextView.setText(currentRecipe.getName());
 
             ImageView recipeImageView = gridItem.findViewById(R.id.recipe_image_view);
-            Picasso.with(getActivity()).load(currentRecipe.getImageUrl()).into(recipeImageView);
+            if (currentRecipe.getImageUrl() != null) {
+                Picasso.with(getActivity()).load(currentRecipe.getImageUrl()).into(recipeImageView);
+            }
 
             gridItem.setOnClickListener(new View.OnClickListener() {
                 @Override

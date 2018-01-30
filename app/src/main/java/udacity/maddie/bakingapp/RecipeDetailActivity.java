@@ -36,13 +36,19 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
         }
     }
 
-    private void loadRecipeStepDetailFragment(int stepIndex) {
+    public void loadRecipeStepDetailFragment(int stepIndex) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Recipe recipe = Recipes.get(selectedRecipeIndex);
+
+        for (RecipeStep step : recipe.getSteps()) {
+            step.setSelected(false);
+        }
+
         RecipeStep step = recipe.getSteps().get(stepIndex);
 
         if (isTablet) {
-            recipeStepDetailFragment = RecipeStepDetailFragment.newInstance(step, recipe);
+            step.setSelected(true);
+            recipeStepDetailFragment = RecipeStepDetailFragment.newInstance(step, recipe, this);
             fragmentManager.beginTransaction().replace(R.id.recipe_step_detail_fragment, recipeStepDetailFragment).commit();
         } else {
             Intent intent = new Intent(this, RecipeStepDetailActivity.class);

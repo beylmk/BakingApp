@@ -1,6 +1,7 @@
 package udacity.maddie.bakingapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +41,14 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
             stepNumberTextView = v.findViewById(R.id.step_number_text_view);
 
         }
+
+        public void setSelectedBackground(Context context) {
+            itemView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        }
+
+        public void setNormalBackground(Context context) {
+            itemView.setBackgroundColor(context.getResources().getColor(R.color.cardview_light_background));
+        }
     }
 
     public RecipeStepAdapter(Context context, ArrayList<RecipeStep> recipeSteps) {
@@ -61,8 +70,14 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
     public void onBindViewHolder(RecipeStepViewHolder holder, final int position) {
         RecipeStep currentStep = recipeSteps.get(position);
         holder.descriptionTextView.setText(currentStep.getShortDescription());
-        holder.stepNumberTextView.setText(String.valueOf(currentStep.getId() + 1));
+        holder.stepNumberTextView.setText(String.valueOf(currentStep.getId()));
         Picasso.with(context).load(currentStep.getThumbnailUrl()).into(holder.thumbnailImageView);
+
+        if (currentStep.isSelected()) {
+            holder.setSelectedBackground(context);
+        } else {
+            holder.setNormalBackground(context);
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

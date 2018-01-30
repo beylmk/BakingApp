@@ -1,8 +1,11 @@
 package udacity.maddie.bakingapp;
 
+import com.google.gson.JsonParser;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.JsonReader;
+
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,6 +14,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +35,12 @@ public class RecipeUtils {
 
         try {
             inputStream = context.getAssets().open(RECIPE_FILE_NAME);
-            byte[] buffer = new byte[inputStream.available()];
-            JSONArray recipesObject = new JSONArray(context.getString(R.string.recipes_json));
+            int size = inputStream.available();
+            byte[] buffer = new byte[size];
+            inputStream.read(buffer);
+            String json = new String(buffer, "UTF-8");
+
+            JSONArray recipesObject = new JSONArray(json);
             return recipesObject;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
