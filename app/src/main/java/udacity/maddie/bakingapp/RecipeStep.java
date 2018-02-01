@@ -35,7 +35,13 @@ public class RecipeStep {
     }
 
     public String getDescription() {
-        return description;
+
+        if (getId() == 0) {
+            return description;
+        }
+
+        //remove number at beginning of description
+        return description.substring(3);
     }
 
     public void setDescription(String description) {

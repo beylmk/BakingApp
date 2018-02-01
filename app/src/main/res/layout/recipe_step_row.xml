@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <ImageView
-            android:id="@+id/thumbnail_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"/>
     <TextView
             android:id="@+id/step_number_text_view"
+            android:gravity="center_vertical"
             android:layout_alignParentStart="true"
-            android:textSize="@dimen/recipe_step_number_text_size"
+            android:textSize="@dimen/header_text_size"
+            android:layout_marginRight="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
     <TextView
             android:id="@+id/description_text_view"
-            android:textSize="@dimen/recipe_step_description_text_size"
-            android:layout_centerInParent="true"
+            android:layout_toRightOf="@id/step_number_text_view"
+            android:textSize="@dimen/recipe_details_text_size"
+            android:gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

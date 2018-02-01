@@ -62,6 +62,9 @@ public class RecipeGridFragment extends Fragment {
     private void setUpRecipeListView() {
 
         recipeGridView = getView().findViewById(R.id.recipe_grid_view);
+        if (RecipeUtils.getIsTablet(getActivity())) {
+            recipeGridView.setNumColumns(4);
+        }
         recipeAdapter = new RecipeAdapter();
         recipeGridView.setAdapter(recipeAdapter);
     }

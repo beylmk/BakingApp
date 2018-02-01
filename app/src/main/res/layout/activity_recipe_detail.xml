@@ -7,7 +7,6 @@
         android:layout_height="match_parent"
         tools:context="udacity.maddie.bakingapp.RecipeDetailActivity">
 
-
     <FrameLayout
             android:id="@+id/recipe_detail_fragment"
             android:layout_width="match_parent"

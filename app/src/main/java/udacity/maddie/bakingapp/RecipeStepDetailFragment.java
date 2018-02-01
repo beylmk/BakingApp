@@ -95,26 +95,29 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        longDescriptionTextView = view.findViewById(R.id.long_description_text_view);
-        longDescriptionTextView.setText(step.getDescription());
+        if (!RecipeUtils.isLandscape(getActivity()) || RecipeUtils.getIsTablet(getActivity())) {
+            longDescriptionTextView = view.findViewById(R.id.long_description_text_view);
+            longDescriptionTextView.setText(step.getDescription());
 
+
+            if (!RecipeUtils.getIsTablet(getActivity())) {
+                navigationContainer = view.findViewById(R.id.navigation_container);
+                getActivity().setTitle(recipe.getName() + " " + getString(R.string.details));
+                setUpNavigation(view);
+            }
+        }
+
+        setUpExoPlayer(view);
+    }
+
+    private void setUpExoPlayer(View view) {
         exoPlayerView = view.findViewById(R.id.video_player);
-        navigationContainer = view.findViewById(R.id.navigation_container);
-
         if (!isEmpty(step.getVideoURL())) {
             initializeMediaSession();
             initializePlayer(Uri.parse(step.getVideoURL()));
         } else {
             exoPlayerView.setVisibility(View.GONE);
         }
-
-        if (!RecipeUtils.getIsTablet(getActivity())) {
-            getActivity().setTitle(recipe.getName() + " " + getString(R.string.details));
-            setUpNavigation(view);
-        } else {
-            navigationContainer.setVisibility(View.INVISIBLE);
-        }
-
     }
 
     private void setUpNavigation(View view) {

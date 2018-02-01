@@ -61,4 +61,8 @@ public class RecipeUtils {
             & Configuration.SCREENLAYOUT_SIZE_MASK)
             >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
+
+    public static boolean isLandscape(Context context) {
+        return context.getResources().getConfiguration().orientation == context.getResources().getConfiguration().ORIENTATION_LANDSCAPE;
+    }
 }

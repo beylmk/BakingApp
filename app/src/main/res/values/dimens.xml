@@ -2,6 +2,7 @@
 <resources>
     <dimen name="recipe_row_height">300dp</dimen>
     <dimen name="recipe_name_text_size">25sp</dimen>
-    <dimen name="recipe_step_number_text_size">30sp</dimen>
-    <dimen name="recipe_step_description_text_size">15sp</dimen>
+    <dimen name="header_text_size">25sp</dimen>
+    <dimen name="recipe_step_description_text_size">25sp</dimen>
+    <dimen name="recipe_details_text_size">18sp</dimen>
 </resources>
