@@ -96,15 +96,15 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
         super.onViewCreated(view, savedInstanceState);
 
         if (!RecipeUtils.isLandscape(getActivity()) || RecipeUtils.getIsTablet(getActivity())) {
+            //for landscape on regular phone, don't show text
             longDescriptionTextView = view.findViewById(R.id.long_description_text_view);
             longDescriptionTextView.setText(step.getDescription());
+        }
 
-
-            if (!RecipeUtils.getIsTablet(getActivity())) {
-                navigationContainer = view.findViewById(R.id.navigation_container);
-                getActivity().setTitle(recipe.getName() + " " + getString(R.string.details));
-                setUpNavigation(view);
-            }
+        if (!RecipeUtils.getIsTablet(getActivity())) {
+            navigationContainer = view.findViewById(R.id.navigation_container);
+            getActivity().setTitle(recipe.getName() + " " + getString(R.string.details));
+            setUpNavigation(view);
         }
 
         setUpExoPlayer(view);

@@ -23,15 +23,15 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             int widgetId = appWidgetIds[i];
             String number = String.format("%03d", (new Random().nextInt(900) + 100));
 
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                R.layout.recipe_widget);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
             remoteViews.setTextViewText(R.id.recipe_name_text_view_widget, number);
 
             Intent intent = new Intent(context, RecipeDetailActivity.class);
             intent.putExtra(RecipeDetailActivity.SELECTED_RECIPE_INDEX_KEY, 0);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+            PendingIntent pendingIntent = PendingIntent.getActivity(context,
                 0, intent, 0);
             remoteViews.setOnClickPendingIntent(R.id.recipe_go_button_widget, pendingIntent);
+            appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
