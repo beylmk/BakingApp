@@ -85,25 +85,9 @@ public class RecipeDetailFragment extends Fragment {
 
     private void setUpRecipeIngredients() {
         ArrayList<RecipeIngredient> ingredients = recipe.getIngredients();
-        String ingredientsText = "";
+        String ingredientsText = RecipeUtils.formatIngredients(ingredients);
 
-        for (RecipeIngredient ingredient : ingredients) {
-            ingredientsText += formatIngredientString(ingredient) + "\n";
-        }
         ingredientsTextView.setText(ingredientsText);
-    }
-
-    private String formatIngredientString(RecipeIngredient ingredient) {
-
-        Float quantityValue = ingredient.getQuantity();
-        String ingredientQuantity = quantityValue != null ? String.valueOf(quantityValue) : "";
-
-        String ingredientMeasure =
-            ingredient.getMeasure() != null ? ingredient.getMeasure().toString().toLowerCase() + " ": "";
-
-        String ingredientName = ingredient.getIngredient() != null ? ingredient.getIngredient() : "";
-
-        return ingredientQuantity + " " + ingredientMeasure + ingredientName;
     }
 
     @Override

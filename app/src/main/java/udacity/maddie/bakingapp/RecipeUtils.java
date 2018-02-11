@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -54,6 +55,28 @@ public class RecipeUtils {
                 }
             }
         }
+    }
+
+    public static String formatIngredients(ArrayList<RecipeIngredient> ingredientArrayList) {
+        String ingredientsText = "";
+
+        for (RecipeIngredient ingredient : ingredientArrayList) {
+            ingredientsText += formatIngredientString(ingredient) + "\n";
+        }
+        return ingredientsText;
+    }
+
+    public static String formatIngredientString(RecipeIngredient ingredient) {
+
+        Float quantityValue = ingredient.getQuantity();
+        String ingredientQuantity = quantityValue != null ? String.valueOf(quantityValue) : "";
+
+        String ingredientMeasure =
+            ingredient.getMeasure() != null ? ingredient.getMeasure().toString().toLowerCase() + " ": "";
+
+        String ingredientName = ingredient.getIngredient() != null ? ingredient.getIngredient() : "";
+
+        return ingredientQuantity + " " + ingredientMeasure + ingredientName;
     }
 
     public static boolean getIsTablet(Context context) {

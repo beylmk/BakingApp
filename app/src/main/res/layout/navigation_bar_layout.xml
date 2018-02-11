@@ -12,8 +12,8 @@
             android:src="@drawable/backwardarrow"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/navigation_container_height"
+            android:layout_height="@dimen/navigation_container_height"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"/>
 
@@ -22,8 +22,8 @@
             android:src="@drawable/forwardarrow"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/navigation_container_height"
+            android:layout_height="@dimen/navigation_container_height"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"/>
 

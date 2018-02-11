@@ -6,4 +6,5 @@
     <dimen name="recipe_step_description_text_size">25sp</dimen>
     <dimen name="recipe_details_text_size">18sp</dimen>
     <dimen name="widget_padding">5dp</dimen>
+    <dimen name="navigation_container_height">40dp</dimen>
 </resources>
