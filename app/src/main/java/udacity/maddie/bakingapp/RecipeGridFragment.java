@@ -1,14 +1,15 @@
 package udacity.maddie.bakingapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,7 +17,7 @@ import com.squareup.picasso.Picasso;
 
 public class RecipeGridFragment extends Fragment {
 
-    private GridView recipeGridView;
+    private RecyclerView recipeRecyclerView;
 
     private RecipeAdapter recipeAdapter;
 
@@ -56,32 +57,47 @@ public class RecipeGridFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setUpRecipeListView();
+        setUpRecipeRecyclerView();
     }
 
-    private void setUpRecipeListView() {
+    private void setUpRecipeRecyclerView() {
 
-        recipeGridView = getView().findViewById(R.id.recipe_grid_view);
-        if (RecipeUtils.getIsTablet(getActivity())) {
-            recipeGridView.setNumColumns(4);
-        }
-        recipeAdapter = new RecipeAdapter();
-        recipeGridView.setAdapter(recipeAdapter);
+        recipeRecyclerView = getView().findViewById(R.id.recipe_recycler_view);
+        int numberOfColumns = RecipeUtils.calculateNoOfColumns(getContext());
+        recipeRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
+
+        recipeAdapter = new RecipeAdapter(getActivity());
+        recipeRecyclerView.setAdapter(recipeAdapter);
     }
 
-    public class RecipeAdapter extends BaseAdapter {
+    public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
 
-        public RecipeAdapter() {
+        private LayoutInflater mInflater;
+
+        public RecipeAdapter(Context context) {
+            mInflater = LayoutInflater.from(context);
         }
 
         @Override
-        public int getCount() {
-            return Recipes.size();
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = mInflater.inflate(R.layout.recipe_grid_item, parent, false);
+            return new ViewHolder(view);
         }
 
         @Override
-        public Object getItem(int i) {
-            return Recipes.get(i);
+        public void onBindViewHolder(RecipeAdapter.ViewHolder holder, final int position) {
+            Recipe recipe = Recipes.get(position);
+            holder.recipeNameTextView.setText(recipe.getName());
+            if (recipe.getImageUrl() != null) {
+                Picasso.with(getActivity()).load(recipe.getImageUrl()).into(holder.recipeImageView);
+            }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onRecipeClick(position);
+                    notifyDataSetChanged();
+                }
+            });
         }
 
         @Override
@@ -90,34 +106,20 @@ public class RecipeGridFragment extends Fragment {
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View gridItem;
+        public int getItemCount() {
+            return Recipes.size();
+        }
 
-            Recipe currentRecipe = Recipes.get(position);
+        public class ViewHolder extends RecyclerView.ViewHolder {
 
-            if (convertView == null) {
-                gridItem = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_grid_item, parent, false);
-            } else {
-                gridItem = convertView;
+            ImageView recipeImageView;
+            TextView recipeNameTextView;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                recipeImageView = itemView.findViewById(R.id.recipe_image_view);
+                recipeNameTextView = itemView.findViewById(R.id.recipe_name_text_view);
             }
-
-            TextView recipeNameTextView = gridItem.findViewById(R.id.recipe_name_text_view);
-            recipeNameTextView.setText(currentRecipe.getName());
-
-            ImageView recipeImageView = gridItem.findViewById(R.id.recipe_image_view);
-            if (currentRecipe.getImageUrl() != null) {
-                Picasso.with(getActivity()).load(currentRecipe.getImageUrl()).into(recipeImageView);
-            }
-
-            gridItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onRecipeClick(position);
-                    notifyDataSetChanged();
-                }
-            });
-
-            return gridItem;
         }
     }
 }

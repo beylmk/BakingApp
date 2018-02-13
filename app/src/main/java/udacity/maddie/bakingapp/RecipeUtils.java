@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.DisplayMetrics;
 import android.util.JsonReader;
 
 import android.util.Log;
@@ -87,5 +88,12 @@ public class RecipeUtils {
 
     public static boolean isLandscape(Context context) {
         return context.getResources().getConfiguration().orientation == context.getResources().getConfiguration().ORIENTATION_LANDSCAPE;
+    }
+
+    public static int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int noOfColumns = (int) (dpWidth / 200);
+        return noOfColumns;
     }
 }

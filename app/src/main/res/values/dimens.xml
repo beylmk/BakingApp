@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="recipe_row_height">300dp</dimen>
+    <dimen name="recipe_row_height">250dp</dimen>
     <dimen name="recipe_name_text_size">25sp</dimen>
     <dimen name="header_text_size">25sp</dimen>
     <dimen name="recipe_step_description_text_size">25sp</dimen>

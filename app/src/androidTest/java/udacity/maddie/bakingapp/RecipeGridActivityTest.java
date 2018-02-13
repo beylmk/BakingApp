@@ -31,7 +31,7 @@ public class RecipeGridActivityTest {
 
     @Test
     public void recipeClick_opensRecipeDetails_Test() throws Exception {
-        onData(anything()).inAdapterView(withId(R.id.recipe_grid_view)).atPosition(RECIPE_INDEX).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.recipe_recycler_view)).atPosition(RECIPE_INDEX).perform(click());
 
         onView(withId(R.id.ingredients_text_view)).check(ViewAssertions.matches(withText(RecipeUtils.formatIngredients(Recipes.get
             (RECIPE_INDEX).getIngredients()))));

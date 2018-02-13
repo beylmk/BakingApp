@@ -4,8 +4,8 @@
              android:layout_height="match_parent"
              tools:context="udacity.maddie.bakingapp.RecipeGridFragment">
 
-    <GridView
-            android:id="@+id/recipe_grid_view"
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/recipe_recycler_view"
             android:numColumns="2"
             android:verticalSpacing="5dp"
             android:horizontalSpacing="5dp"

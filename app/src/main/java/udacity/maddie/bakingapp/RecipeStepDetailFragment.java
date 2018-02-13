@@ -161,9 +161,9 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onStop() {
         releasePlayer();
+        super.onStop();
     }
 
     @Override
