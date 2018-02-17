@@ -1,26 +1,14 @@
 package udacity.maddie.bakingapp;
 
-import com.google.gson.JsonParser;
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.DisplayMetrics;
-import android.util.JsonReader;
 
-import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
+
+import retrofit.Call;
+import retrofit.http.GET;
 
 /**
  * Created by rfl518 on 10/13/17.
@@ -30,33 +18,7 @@ public class RecipeUtils {
 
     public static final String TAG = RecipeUtils.class.getSimpleName();
 
-    public static final String RECIPE_FILE_NAME = "recipes.json";
-
-    public static JSONArray getRecipesArray(Context context) {
-        InputStream inputStream = null;
-
-        try {
-            inputStream = context.getAssets().open(RECIPE_FILE_NAME);
-            int size = inputStream.available();
-            byte[] buffer = new byte[size];
-            inputStream.read(buffer);
-            String json = new String(buffer, "UTF-8");
-
-            JSONArray recipesObject = new JSONArray(json);
-            return recipesObject;
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            return null;
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    Log.e(TAG, e.getMessage());
-                }
-            }
-        }
-    }
+    public static final String RECIPE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     public static String formatIngredients(ArrayList<RecipeIngredient> ingredientArrayList) {
         String ingredientsText = "";
@@ -95,5 +57,10 @@ public class RecipeUtils {
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int noOfColumns = (int) (dpWidth / 200);
         return noOfColumns;
+    }
+
+    public interface RecipesEndpointInterface {
+        @GET(RECIPE_URL)
+        Call<List<Recipe>> getRecipes();
     }
 }

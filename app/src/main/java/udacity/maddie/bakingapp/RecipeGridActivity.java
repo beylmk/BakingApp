@@ -1,25 +1,27 @@
 package udacity.maddie.bakingapp;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.widget.Toast;
 
-import org.json.JSONArray;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class RecipeGridActivity extends AppCompatActivity implements OnRecipeClickListener {
 
     RecipeGridFragment recipeGridFragment;
 
-    private static int selectedRecipeIndex = -1;
+    public static int selectedRecipeIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +31,42 @@ public class RecipeGridActivity extends AppCompatActivity implements OnRecipeCli
         if (Recipes.getRecipes().isEmpty()) {
             getRecipes();
         }
-        setupRecipeListFragment();
     }
 
     private void getRecipes() {
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<ArrayList<Recipe>>(){}.getType();
+        Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(RecipeUtils.RECIPE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
 
-        JSONArray recipesObject = RecipeUtils.getRecipesArray(this);
-        ArrayList<Recipe> recipes = gson.fromJson(recipesObject.toString(), collectionType);
-        Recipes.addAll(recipes);
+        RecipeUtils.RecipesEndpointInterface endpoints = retrofit.create(RecipeUtils.RecipesEndpointInterface.class);
+        Call<List<Recipe>> call = endpoints.getRecipes();
 
-        //by default, show details for first recipe
-        selectedRecipeIndex = (!Recipes.getRecipes().isEmpty()) ? 0 : -1;
+        call.enqueue(new Callback<List<Recipe>>() {
+
+            @Override
+            public void onResponse(Response response) {
+                if (response == null && response.isSuccess()) {
+                    return;
+                }
+
+                ArrayList<Recipe> recipes = (ArrayList<Recipe>) response.body();
+
+                if (recipes == null || recipes == null || recipes.size() == 0) {
+                    Toast.makeText(RecipeGridActivity.this, R.string.no_recipes, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Recipes.addAll(recipes);
+                selectedRecipeIndex = (!Recipes.getRecipes().isEmpty()) ? 0 : -1;
+                setupRecipeListFragment();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(RecipeGridActivity.this, R.string.failure_message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void setupRecipeListFragment() {
