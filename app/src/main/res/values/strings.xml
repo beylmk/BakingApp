@@ -7,4 +7,5 @@
     <string name="failure_message">Unable to retrieve recipes from the server.</string>
     <string name="no_recipes">No recipes from given resource</string>
     <string name="choose_widget_recipe">Choose recipe for widget</string>
+    <string name="ok">OK</string>
 </resources>

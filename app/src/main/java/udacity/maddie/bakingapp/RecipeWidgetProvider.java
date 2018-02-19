@@ -26,7 +26,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         final int count = appWidgetIds.length;
         boolean recipesLoaded = false;
 
-        if (Recipes.getRecipes() != null) {
+        if (Recipes.getRecipes() != null && Recipes.getRecipes().size() > 0) {
             recipesLoaded = true;
         }
 
@@ -49,11 +49,18 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
                 remoteViews.setOnClickPendingIntent(R.id.recipe_widget_container, pendingIntent);
             } else {
                 remoteViews.setTextViewText(R.id.recipe_name_text_view_widget, "Open app to load recipes");
+                Intent intent = new Intent(context, RecipeGridActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                remoteViews.setOnClickPendingIntent(R.id.recipe_widget_container, pendingIntent);
             }
 
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
         }
+    }
+
+    public static void setSelectedRecipeIndex(int recipeIndex) {
+        selectedRecipeIndex = recipeIndex;
     }
 
 }

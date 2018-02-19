@@ -16,6 +16,7 @@ import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
+import retrofit.http.GET;
 
 public class RecipeGridActivity extends AppCompatActivity implements OnRecipeClickListener {
 
@@ -44,7 +45,7 @@ public class RecipeGridActivity extends AppCompatActivity implements OnRecipeCli
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-        RecipeUtils.RecipesEndpointInterface endpoints = retrofit.create(RecipeUtils.RecipesEndpointInterface.class);
+        RecipesEndpointInterface endpoints = retrofit.create(RecipesEndpointInterface.class);
         Call<List<Recipe>> call = endpoints.getRecipes();
 
         call.enqueue(new Callback<List<Recipe>>() {
@@ -109,5 +110,10 @@ public class RecipeGridActivity extends AppCompatActivity implements OnRecipeCli
         selectedRecipeIndex = position;
         loadRecipeDetailFragment();
 
+    }
+
+    public interface RecipesEndpointInterface {
+        @GET(RecipeUtils.RECIPE_URL)
+        Call<List<Recipe>> getRecipes();
     }
 }

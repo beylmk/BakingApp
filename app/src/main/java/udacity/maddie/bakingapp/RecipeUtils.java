@@ -2,8 +2,10 @@ package udacity.maddie.bakingapp;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,8 +61,20 @@ public class RecipeUtils {
         return noOfColumns;
     }
 
-    public interface RecipesEndpointInterface {
-        @GET(RECIPE_URL)
-        Call<List<Recipe>> getRecipes();
+    public static ArrayList<String> getSpinnerNameArray() {
+        ArrayList<String> recipeNamesArray = new ArrayList<>();
+        for (Recipe recipe : Recipes.getRecipes()) {
+            recipeNamesArray.add(recipe.getName());
+        }
+        return recipeNamesArray;
+    }
+
+    public static int getRecipeIndexByName(String recipeName) {
+        for (int i = 0; i < Recipes.getRecipes().size(); i++) {
+            if (TextUtils.equals(recipeName, Recipes.get(i).getName())) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
