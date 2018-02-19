@@ -11,19 +11,30 @@ public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRe
 
     public static final String SELECTED_RECIPE_STEP_INDEX_KEY = "selectedRecipeStepIndex";
 
+    public static final String SELECTED_RECIPE_INDEX_KEY = "selectedRecipeIndex";
+
     private RecipeStepDetailFragment recipeStepDetailFragment;
 
     RecipeStep recipeStep;
 
     Recipe recipe;
 
+    int selectedRecipeIndex;
+
+    int selectedRecipeStepIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            selectedRecipeIndex = savedInstanceState.getInt(SELECTED_RECIPE_INDEX_KEY, -1);
+            selectedRecipeStepIndex = savedInstanceState.getInt(SELECTED_RECIPE_STEP_INDEX_KEY, -1);
+        } else {
+            selectedRecipeIndex = getIntent().getIntExtra(RecipeDetailActivity.SELECTED_RECIPE_INDEX_KEY, -1);
+            selectedRecipeStepIndex = getIntent().getIntExtra(SELECTED_RECIPE_STEP_INDEX_KEY, -1);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_step_detail);
-
-        int selectedRecipeIndex = getIntent().getIntExtra(RecipeDetailActivity.SELECTED_RECIPE_INDEX_KEY, -1);
-        int selectedRecipeStepIndex = getIntent().getIntExtra(SELECTED_RECIPE_STEP_INDEX_KEY, -1);
 
         if (selectedRecipeIndex != -1 && selectedRecipeStepIndex != -1) {
             recipe = Recipes.get(selectedRecipeIndex);
@@ -41,7 +52,16 @@ public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRe
 
     @Override
     public void onRecipeStepClick(int index) {
+        selectedRecipeStepIndex = index;
         recipeStep = recipe.getSteps().get(index);
         loadRecipeStepDetailFragment();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SELECTED_RECIPE_INDEX_KEY, selectedRecipeIndex);
+        outState.putInt(SELECTED_RECIPE_STEP_INDEX_KEY, selectedRecipeStepIndex);
+
+        super.onSaveInstanceState(outState);
     }
 }

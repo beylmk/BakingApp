@@ -21,10 +21,15 @@ public class RecipeGridActivity extends AppCompatActivity implements OnRecipeCli
 
     RecipeGridFragment recipeGridFragment;
 
-    public static int selectedRecipeIndex = -1;
+    private static final String SELECTED_RECIPE_INDEX_KEY = "selectedRecipeIndex";
+
+    public static int selectedRecipeIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            selectedRecipeIndex = savedInstanceState.getInt(SELECTED_RECIPE_INDEX_KEY, -1);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
@@ -88,6 +93,12 @@ public class RecipeGridActivity extends AppCompatActivity implements OnRecipeCli
             fragmentManager.beginTransaction().replace(R.id.recipe_detail_fragment, new Fragment()).commit();
         }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SELECTED_RECIPE_INDEX_KEY, selectedRecipeIndex);
+        super.onSaveInstanceState(outState);
     }
 
     public static int getSelectedRecipeIndex() {

@@ -13,6 +13,15 @@
             android:layout_marginLeft="0dp"
     />
 
+    <TextView
+            android:id="@+id/long_description_text_view"
+            android:visibility="gone"
+            android:autoSizeTextType="uniform"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/video_player"
+    />
+
     <include layout="@layout/navigation_bar_layout"/>
 
 </android.support.constraint.ConstraintLayout>

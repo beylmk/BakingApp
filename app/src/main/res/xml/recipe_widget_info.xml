@@ -5,5 +5,5 @@
                     android:initialLayout="@layout/recipe_widget"
                     android:resizeMode="horizontal|vertical"
                     android:widgetCategory="home_screen|keyguard"
-                    android:previewImage="@drawable/recipe_image_default">
-</appwidget-provider>
+                    android:previewImage="@drawable/recipe_image_default"
+                    android:configure="udacity.maddie.bakingapp.RecipeWidgetConfigActivity"/>

@@ -23,6 +23,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            selectedRecipeIndex = savedInstanceState.getInt(SELECTED_RECIPE_INDEX_KEY, -1);
+        } else {
+            selectedRecipeIndex = getIntent().getIntExtra(SELECTED_RECIPE_INDEX_KEY, -1);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
 
@@ -30,7 +36,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
 
         setUpNavigation();
 
-        selectedRecipeIndex = getIntent().getIntExtra(SELECTED_RECIPE_INDEX_KEY, -1);
         loadRecipeDetailFragment();
         if (isTablet) {
             loadRecipeStepDetailFragment(0);
@@ -78,6 +83,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
             recipeDetailFragment = RecipeDetailFragment.newInstance(Recipes.get(selectedRecipeIndex));
             fragmentManager.beginTransaction().replace(R.id.recipe_detail_fragment, recipeDetailFragment).commit();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SELECTED_RECIPE_INDEX_KEY, selectedRecipeIndex);
+        super.onSaveInstanceState(outState);
     }
 
     public void loadRecipeStepDetailFragment(int stepIndex) {

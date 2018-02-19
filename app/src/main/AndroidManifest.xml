@@ -30,6 +30,11 @@
         </activity>
         <activity android:name=".RecipeStepDetailActivity">
         </activity>
+        <activity android:name="udacity.maddie.bakingapp.RecipeWidgetConfigActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
         <receiver android:name=".RecipeWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

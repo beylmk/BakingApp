@@ -1,5 +1,6 @@
 package udacity.maddie.bakingapp;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -23,6 +24,7 @@ import com.google.android.exoplayer2.util.Util;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -31,7 +33,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -45,9 +50,13 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
 
     private static final String TAG = RecipeStepDetailFragment.class.getSimpleName();
 
+    private static final String EXO_PLAYER_POSITION = "exoPlayerPosition";
+
     private static RecipeStep step;
 
     private static Recipe recipe;
+
+    private ImageView stepImageView;
 
     private static OnRecipeStepClickListener navigationClickListener;
 
@@ -62,6 +71,8 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
     private PlaybackStateCompat.Builder stateBuilder;
 
     private View navigationContainer;
+
+    private long exoPlayerPosition = C.TIME_UNSET;
 
     public RecipeStepDetailFragment() {
     }
@@ -82,6 +93,9 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(EXO_PLAYER_POSITION)) {
+            exoPlayerPosition = (long) savedInstanceState.get(EXO_PLAYER_POSITION);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -95,9 +109,10 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (!RecipeUtils.isLandscape(getActivity()) || RecipeUtils.getIsTablet(getActivity())) {
-            //for landscape on regular phone, don't show text
+        if (!(RecipeUtils.isLandscape(getActivity()) && !isEmpty(step.getVideoURL()))) {
+            //show text unless is landscape and has video
             longDescriptionTextView = view.findViewById(R.id.long_description_text_view);
+            longDescriptionTextView.setVisibility(View.VISIBLE);
             longDescriptionTextView.setText(step.getDescription());
         }
 
@@ -105,9 +120,22 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
             navigationContainer = view.findViewById(R.id.navigation_container);
             getActivity().setTitle(recipe.getName() + " " + getString(R.string.details));
             setUpNavigation(view);
+            if (!RecipeUtils.isLandscape(getActivity())) {
+                setUpImage(view);
+            }
         }
 
         setUpExoPlayer(view);
+    }
+
+    private void setUpImage(View view) {
+        stepImageView = view.findViewById(R.id.recipe_step_detail_image_view);
+        if (step.getThumbnailUrl() != null) {
+            Picasso.with(getActivity()).load(step.getThumbnailUrl()).into(stepImageView);
+            stepImageView.setVisibility(View.VISIBLE);
+        } else {
+            stepImageView.setVisibility(View.GONE);
+        }
     }
 
     private void setUpExoPlayer(View view) {
@@ -154,6 +182,11 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
         });
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putLong(EXO_PLAYER_POSITION, exoPlayerPosition);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onAttach(Context context) {
