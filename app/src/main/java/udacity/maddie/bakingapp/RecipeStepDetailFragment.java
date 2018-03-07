@@ -24,7 +24,6 @@ import com.google.android.exoplayer2.util.Util;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -72,7 +71,7 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
 
     private View navigationContainer;
 
-    private long exoPlayerPosition = C.TIME_UNSET;
+    private static Long exoPlayerPosition = C.TIME_UNSET;
 
     public RecipeStepDetailFragment() {
     }
@@ -125,7 +124,9 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
             }
         }
 
-        setUpExoPlayer(view);
+        if (getArguments() == null)
+            setUpExoPlayer(view);
+
     }
 
     private void setUpImage(View view) {
@@ -184,6 +185,7 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        exoPlayerPosition = exoPlayer.getCurrentPosition();
         outState.putLong(EXO_PLAYER_POSITION, exoPlayerPosition);
         super.onSaveInstanceState(outState);
     }
@@ -305,6 +307,9 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
             MediaSource mediaSource =
                 new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getActivity(), userAgent), new DefaultExtractorsFactory(),
                     null, null);
+            if (exoPlayerPosition != C.TIME_UNSET) {
+                exoPlayer.seekTo(exoPlayerPosition);
+            }
             exoPlayer.prepare(mediaSource);
             exoPlayer.setPlayWhenReady(true);
         }

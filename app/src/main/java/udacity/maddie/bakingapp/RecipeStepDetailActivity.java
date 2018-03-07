@@ -25,6 +25,9 @@ public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_recipe_step_detail);
+
         if (savedInstanceState != null) {
             selectedRecipeIndex = savedInstanceState.getInt(SELECTED_RECIPE_INDEX_KEY, -1);
             selectedRecipeStepIndex = savedInstanceState.getInt(SELECTED_RECIPE_STEP_INDEX_KEY, -1);
@@ -32,9 +35,6 @@ public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRe
             selectedRecipeIndex = getIntent().getIntExtra(RecipeDetailActivity.SELECTED_RECIPE_INDEX_KEY, -1);
             selectedRecipeStepIndex = getIntent().getIntExtra(SELECTED_RECIPE_STEP_INDEX_KEY, -1);
         }
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_step_detail);
 
         if (selectedRecipeIndex != -1 && selectedRecipeStepIndex != -1) {
             recipe = Recipes.get(selectedRecipeIndex);
