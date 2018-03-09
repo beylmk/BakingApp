@@ -5,22 +5,22 @@ import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
-import retrofit.Call;
-import retrofit.http.GET;
 
 /**
  * Created by rfl518 on 10/13/17.
  */
 
-public class RecipeUtils {
+public final class RecipeUtils {
 
     public static final String TAG = RecipeUtils.class.getSimpleName();
 
     public static final String RECIPE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+
+    public RecipeUtils() {
+        throw new AssertionError("No RecipeUtils instances for you!");
+    }
 
     public static String formatIngredients(ArrayList<RecipeIngredient> ingredientArrayList) {
         String ingredientsText = "";

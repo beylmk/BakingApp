@@ -185,8 +185,10 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        exoPlayerPosition = exoPlayer.getCurrentPosition();
-        outState.putLong(EXO_PLAYER_POSITION, exoPlayerPosition);
+        if (!isEmpty(step.getVideoURL())) {
+            exoPlayerPosition = exoPlayer.getCurrentPosition();
+            outState.putLong(EXO_PLAYER_POSITION, exoPlayerPosition);
+        }
         super.onSaveInstanceState(outState);
     }
 

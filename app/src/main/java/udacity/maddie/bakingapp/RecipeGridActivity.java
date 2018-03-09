@@ -20,7 +20,7 @@ import retrofit.http.GET;
 
 public class RecipeGridActivity extends AppCompatActivity implements OnRecipeClickListener {
 
-    RecipeGridFragment recipeGridFragment;
+    private RecipeGridFragment recipeGridFragment;
 
     private static final String SELECTED_RECIPE_INDEX_KEY = "selectedRecipeIndex";
 

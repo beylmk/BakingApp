@@ -11,7 +11,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
 
     public static final String SELECTED_RECIPE_INDEX_KEY = "selectedRecipeIndex";
 
+    public static final String SELECTED_RECIPE_STEP_INDEX_KEY = "selectedRecipeStepIndex";
+
     private int selectedRecipeIndex = -1;
+
+    private int selectedRecipeStepIndex = -1;
 
     private RecipeDetailFragment recipeDetailFragment;
 
@@ -25,8 +29,10 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             selectedRecipeIndex = savedInstanceState.getInt(SELECTED_RECIPE_INDEX_KEY, -1);
+            selectedRecipeStepIndex = savedInstanceState.getInt(SELECTED_RECIPE_STEP_INDEX_KEY, 0);
         } else {
             selectedRecipeIndex = getIntent().getIntExtra(SELECTED_RECIPE_INDEX_KEY, -1);
+            selectedRecipeStepIndex = getIntent().getIntExtra(SELECTED_RECIPE_STEP_INDEX_KEY, 0);
         }
 
         super.onCreate(savedInstanceState);
@@ -38,7 +44,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
 
         loadRecipeDetailFragment();
         if (isTablet) {
-            loadRecipeStepDetailFragment(0);
+            loadRecipeStepDetailFragment();
         }
     }
 
@@ -80,7 +86,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
     private void loadRecipeDetailFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (selectedRecipeIndex != -1 && Recipes.getRecipes() != null && Recipes.getRecipes().size() > 0) {
-            recipeDetailFragment = RecipeDetailFragment.newInstance(Recipes.get(selectedRecipeIndex));
+            recipeDetailFragment = RecipeDetailFragment.newInstance(Recipes.get(selectedRecipeIndex), selectedRecipeStepIndex);
             fragmentManager.beginTransaction().replace(R.id.recipe_detail_fragment, recipeDetailFragment).commit();
         }
     }
@@ -88,10 +94,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(SELECTED_RECIPE_INDEX_KEY, selectedRecipeIndex);
+        outState.putInt(SELECTED_RECIPE_STEP_INDEX_KEY, selectedRecipeStepIndex);
         super.onSaveInstanceState(outState);
     }
 
-    public void loadRecipeStepDetailFragment(int stepIndex) {
+    public void loadRecipeStepDetailFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Recipe recipe = Recipes.get(selectedRecipeIndex);
 
@@ -99,7 +106,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
             step.setSelected(false);
         }
 
-        RecipeStep step = recipe.getSteps().get(stepIndex);
+        RecipeStep step = recipe.getSteps().get(selectedRecipeStepIndex);
 
         if (isTablet) {
             step.setSelected(true);
@@ -107,7 +114,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
             fragmentManager.beginTransaction().replace(R.id.recipe_step_detail_fragment, recipeStepDetailFragment).commit();
         } else {
             Intent intent = new Intent(this, RecipeStepDetailActivity.class);
-            intent.putExtra(RecipeStepDetailActivity.SELECTED_RECIPE_STEP_INDEX_KEY, stepIndex);
+            intent.putExtra(RecipeStepDetailActivity.SELECTED_RECIPE_STEP_INDEX_KEY, selectedRecipeIndex);
             intent.putExtra(SELECTED_RECIPE_INDEX_KEY, selectedRecipeIndex);
             startActivity(intent);
         }
@@ -115,7 +122,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
 
     @Override
     public void onRecipeStepClick(int stepIndex) {
-        loadRecipeStepDetailFragment(stepIndex);
+        selectedRecipeStepIndex = stepIndex;
+        loadRecipeStepDetailFragment();
     }
 
     @Override
@@ -123,7 +131,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
         selectedRecipeIndex = index;
         loadRecipeDetailFragment();
         if (isTablet) {
-            loadRecipeStepDetailFragment(0);
+            loadRecipeStepDetailFragment();
         }
     }
 }
