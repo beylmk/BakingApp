@@ -86,7 +86,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnRecipeS
     private void loadRecipeDetailFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (selectedRecipeIndex != -1 && Recipes.getRecipes() != null && Recipes.getRecipes().size() > 0) {
-            recipeDetailFragment = RecipeDetailFragment.newInstance(Recipes.get(selectedRecipeIndex), selectedRecipeStepIndex);
+            recipeDetailFragment = RecipeDetailFragment.newInstance(Recipes.get(selectedRecipeIndex));
             fragmentManager.beginTransaction().replace(R.id.recipe_detail_fragment, recipeDetailFragment).commit();
         }
     }

@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +47,13 @@ import static android.text.TextUtils.isEmpty;
  * Use the {@link RecipeStepDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.EventListener {
+public class RecipeStepDetailFragment extends Fragment {
 
     private static final String TAG = RecipeStepDetailFragment.class.getSimpleName();
 
     private static final String EXO_PLAYER_POSITION = "exoPlayerPosition";
+
+    private static final String EXO_PLAYER_CURRENT_STATE = "exoPlayerState";
 
     private static RecipeStep step;
 
@@ -69,6 +73,8 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
 
     private PlaybackStateCompat.Builder stateBuilder;
 
+    private static int currentExoPlayerState;
+
     private View navigationContainer;
 
     private static Long exoPlayerPosition = C.TIME_UNSET;
@@ -84,6 +90,7 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
      */
     public static RecipeStepDetailFragment newInstance(RecipeStep inRecipeStep, Recipe inRecipe, OnRecipeStepClickListener listener) {
         RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
+        Log.e("RSDFragment", "RecipeStepDetailFragment's newInstance");
         step = inRecipeStep;
         recipe = inRecipe;
         navigationClickListener = listener;
@@ -92,8 +99,14 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.e("RSDFragment", "RecipeStepDetailFragment's onCreate with " + (savedInstanceState == null ? "null" : "non-null")
+            + " savedInstanceState");
         if (savedInstanceState != null && savedInstanceState.containsKey(EXO_PLAYER_POSITION)) {
             exoPlayerPosition = (long) savedInstanceState.get(EXO_PLAYER_POSITION);
+        }
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(EXO_PLAYER_CURRENT_STATE)) {
+            currentExoPlayerState = (int) savedInstanceState.get(EXO_PLAYER_CURRENT_STATE);
         }
         super.onCreate(savedInstanceState);
     }
@@ -124,9 +137,9 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
             }
         }
 
-        if (getArguments() == null)
-            setUpExoPlayer(view);
-
+        Log.e("RSDFragment", "RecipeStepDetailFragment's onViewCreated with " + (savedInstanceState == null ? "null" : "non-null")
+            + " savedInstanceState");
+        setUpExoPlayer(view);
     }
 
     private void setUpImage(View view) {
@@ -142,7 +155,6 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
     private void setUpExoPlayer(View view) {
         exoPlayerView = view.findViewById(R.id.video_player);
         if (!isEmpty(step.getVideoURL())) {
-            initializeMediaSession();
             initializePlayer(Uri.parse(step.getVideoURL()));
         } else {
             exoPlayerView.setVisibility(View.GONE);
@@ -188,154 +200,37 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
         if (!isEmpty(step.getVideoURL())) {
             exoPlayerPosition = exoPlayer.getCurrentPosition();
             outState.putLong(EXO_PLAYER_POSITION, exoPlayerPosition);
+            outState.putInt(EXO_PLAYER_CURRENT_STATE, currentExoPlayerState);
         }
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onStop() {
+    public void onDestroy() {
         releasePlayer();
-        super.onStop();
-    }
-
-    @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
-
-    }
-
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-    }
-
-    @Override
-    public void onLoadingChanged(boolean isLoading) {
-
-    }
-
-    @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if ((playbackState == ExoPlayer.STATE_READY) && playWhenReady) {
-            stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
-                exoPlayer.getCurrentPosition(), 1f);
-        } else if ((playbackState == ExoPlayer.STATE_READY)) {
-            stateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
-                exoPlayer.getCurrentPosition(), 1f);
-        }
-        mediaSession.setPlaybackState(stateBuilder.build());
-    }
-
-    @Override
-    public void onRepeatModeChanged(int repeatMode) {
-
-    }
-
-    @Override
-    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-    }
-
-    @Override
-    public void onPlayerError(ExoPlaybackException error) {
-
-    }
-
-    @Override
-    public void onPositionDiscontinuity(int reason) {
-
-    }
-
-    @Override
-    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
-    }
-
-    @Override
-    public void onSeekProcessed() {
-
-    }
-
-    private void initializeMediaSession() {
-
-        // Create a MediaSessionCompat.
-        mediaSession = new MediaSessionCompat(getActivity(), TAG);
-
-        // Enable callbacks from MediaButtons and TransportControls.
-        mediaSession.setFlags(
-            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        // Do not let MediaButtons restart the player when the app is not visible.
-        mediaSession.setMediaButtonReceiver(null);
-
-        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
-        stateBuilder = new PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY |
-                    PlaybackStateCompat.ACTION_PAUSE |
-                    PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                    PlaybackStateCompat.ACTION_PLAY_PAUSE);
-
-        mediaSession.setPlaybackState(stateBuilder.build());
-
-        // MySessionCallback has methods that handle callbacks from a media controller.
-        mediaSession.setCallback(new MySessionCallback());
-
-        // Start the Media Session since the activity is active.
-        mediaSession.setActive(true);
-
+        super.onDestroy();
     }
 
     private void initializePlayer(Uri mediaUri) {
         if (exoPlayer == null) {
-            // Create an instance of the ExoPlayer.
+
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             exoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
             exoPlayerView.setPlayer(exoPlayer);
 
-            exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
 
-            // Set the ExoPlayer.EventListener to this activity.
-            exoPlayer.addListener(this);
-
-            // Prepare the MediaSource.
             String userAgent = Util.getUserAgent(getActivity(), "BakingApp");
-            MediaSource mediaSource =
-                new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getActivity(), userAgent), new DefaultExtractorsFactory(),
-                    null, null);
-            if (exoPlayerPosition != C.TIME_UNSET) {
-                exoPlayer.seekTo(exoPlayerPosition);
-            }
+            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getActivity(), userAgent), new
+                DefaultExtractorsFactory(), null, null);
+
             exoPlayer.prepare(mediaSource);
             exoPlayer.setPlayWhenReady(true);
-        }
-    }
 
-
-    /**
-     * Media Session Callbacks, where all external clients control the player.
-     */
-    private class MySessionCallback extends MediaSessionCompat.Callback {
-
-        @Override
-        public void onPlay() {
-            exoPlayer.setPlayWhenReady(true);
         }
 
-        @Override
-        public void onPause() {
-            exoPlayer.setPlayWhenReady(false);
-        }
-
-        @Override
-        public void onSkipToPrevious() {
-            exoPlayer.seekTo(0);
+        if (exoPlayerPosition != C.TIME_UNSET) {
+            exoPlayer.seekTo(exoPlayerPosition);
         }
     }
 
@@ -344,7 +239,6 @@ public class RecipeStepDetailFragment extends Fragment implements ExoPlayer.Even
             exoPlayer.stop();
             exoPlayer.release();
             exoPlayer = null;
-            mediaSession.setActive(false);
         }
     }
 

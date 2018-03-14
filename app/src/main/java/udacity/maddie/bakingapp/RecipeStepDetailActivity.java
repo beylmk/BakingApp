@@ -2,6 +2,7 @@ package udacity.maddie.bakingapp;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 /**
  * Created by rfl518 on 12/18/17.
@@ -27,6 +28,9 @@ public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_step_detail);
+
+        Log.e("RSDActivity", "RecipeStepDetailActivities's onCreate with " + savedInstanceState == null ? "null" : "non-null"
+            + " savedInstanceState");
 
         if (savedInstanceState != null) {
             selectedRecipeIndex = savedInstanceState.getInt(SELECTED_RECIPE_INDEX_KEY, -1);
