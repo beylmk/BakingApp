@@ -40,6 +40,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import static android.text.TextUtils.isEmpty;
+import static com.google.android.exoplayer2.Player.STATE_READY;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,10 +70,6 @@ public class RecipeStepDetailFragment extends Fragment {
 
     private SimpleExoPlayer exoPlayer;
 
-    private MediaSessionCompat mediaSession;
-
-    private PlaybackStateCompat.Builder stateBuilder;
-
     private static int currentExoPlayerState;
 
     private View navigationContainer;
@@ -94,6 +91,7 @@ public class RecipeStepDetailFragment extends Fragment {
         step = inRecipeStep;
         recipe = inRecipe;
         navigationClickListener = listener;
+        exoPlayerPosition = C.TIME_UNSET;
         return fragment;
     }
 
@@ -140,6 +138,18 @@ public class RecipeStepDetailFragment extends Fragment {
         Log.e("RSDFragment", "RecipeStepDetailFragment's onViewCreated with " + (savedInstanceState == null ? "null" : "non-null")
             + " savedInstanceState");
         setUpExoPlayer(view);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            navigationClickListener = (OnRecipeStepClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                + " must implement TextClicked");
+        }
     }
 
     private void setUpImage(View view) {
@@ -200,6 +210,7 @@ public class RecipeStepDetailFragment extends Fragment {
         if (!isEmpty(step.getVideoURL())) {
             exoPlayerPosition = exoPlayer.getCurrentPosition();
             outState.putLong(EXO_PLAYER_POSITION, exoPlayerPosition);
+            currentExoPlayerState = exoPlayer.getPlaybackState();
             outState.putInt(EXO_PLAYER_CURRENT_STATE, currentExoPlayerState);
         }
         super.onSaveInstanceState(outState);

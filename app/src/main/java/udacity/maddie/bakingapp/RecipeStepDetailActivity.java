@@ -1,6 +1,8 @@
 package udacity.maddie.bakingapp;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -8,11 +10,13 @@ import android.util.Log;
  * Created by rfl518 on 12/18/17.
  */
 
-public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRecipeStepClickListener {
+public class RecipeStepDetailActivity extends AppCompatActivity implements OnRecipeStepClickListener {
 
     public static final String SELECTED_RECIPE_STEP_INDEX_KEY = "selectedRecipeStepIndex";
 
     public static final String SELECTED_RECIPE_INDEX_KEY = "selectedRecipeIndex";
+
+    private static final String RECIPE_STEP_DETAIL_FRAGMENT_TAG = "recipeStepDetailFragment";
 
     private RecipeStepDetailFragment recipeStepDetailFragment;
 
@@ -44,14 +48,21 @@ public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRe
             recipe = Recipes.get(selectedRecipeIndex);
             recipeStep = recipe.getSteps().get(selectedRecipeStepIndex);
 
-            loadRecipeStepDetailFragment();
+            if (savedInstanceState == null) {
+                loadRecipeStepDetailFragment();
+            } else {
+                recipeStepDetailFragment =
+                    (RecipeStepDetailFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_STEP_DETAIL_FRAGMENT_TAG);
+            }
         }
     }
 
     private void loadRecipeStepDetailFragment() {
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         recipeStepDetailFragment = RecipeStepDetailFragment.newInstance(recipeStep, recipe, this);
-        fragmentManager.beginTransaction().replace(R.id.recipe_step_detail_fragment, recipeStepDetailFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.recipe_step_detail_fragment, recipeStepDetailFragment,
+            RECIPE_STEP_DETAIL_FRAGMENT_TAG)
+            .commit();
     }
 
     @Override
@@ -63,6 +74,7 @@ public class RecipeStepDetailActivity  extends AppCompatActivity implements OnRe
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.e("RSDActivity", "onSaveInstanceState");
         outState.putInt(SELECTED_RECIPE_INDEX_KEY, selectedRecipeIndex);
         outState.putInt(SELECTED_RECIPE_STEP_INDEX_KEY, selectedRecipeStepIndex);
 
