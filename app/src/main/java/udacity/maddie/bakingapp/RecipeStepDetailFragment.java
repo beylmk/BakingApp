@@ -2,33 +2,23 @@ package udacity.maddie.bakingapp;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +30,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import static android.text.TextUtils.isEmpty;
-import static com.google.android.exoplayer2.Player.STATE_READY;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,7 +59,7 @@ public class RecipeStepDetailFragment extends Fragment {
 
     private SimpleExoPlayer exoPlayer;
 
-    private static int currentExoPlayerState;
+    private static boolean exoPlayerPlayState;
 
     private View navigationContainer;
 
@@ -92,6 +81,7 @@ public class RecipeStepDetailFragment extends Fragment {
         recipe = inRecipe;
         navigationClickListener = listener;
         exoPlayerPosition = C.TIME_UNSET;
+        exoPlayerPlayState = true;
         return fragment;
     }
 
@@ -104,7 +94,7 @@ public class RecipeStepDetailFragment extends Fragment {
         }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(EXO_PLAYER_CURRENT_STATE)) {
-            currentExoPlayerState = (int) savedInstanceState.get(EXO_PLAYER_CURRENT_STATE);
+            exoPlayerPlayState = (boolean) savedInstanceState.get(EXO_PLAYER_CURRENT_STATE);
         }
         super.onCreate(savedInstanceState);
     }
@@ -207,17 +197,17 @@ public class RecipeStepDetailFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (!isEmpty(step.getVideoURL())) {
+        if (!isEmpty(step.getVideoURL()) && exoPlayer != null) {
             exoPlayerPosition = exoPlayer.getCurrentPosition();
             outState.putLong(EXO_PLAYER_POSITION, exoPlayerPosition);
-            currentExoPlayerState = exoPlayer.getPlaybackState();
-            outState.putInt(EXO_PLAYER_CURRENT_STATE, currentExoPlayerState);
+            exoPlayerPlayState = exoPlayer.getPlayWhenReady();
+            outState.putBoolean(EXO_PLAYER_CURRENT_STATE, exoPlayerPlayState);
         }
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onDestroy() {
+    public void onStop() {
         releasePlayer();
         super.onDestroy();
     }
@@ -243,6 +233,8 @@ public class RecipeStepDetailFragment extends Fragment {
         if (exoPlayerPosition != C.TIME_UNSET) {
             exoPlayer.seekTo(exoPlayerPosition);
         }
+
+        exoPlayer.setPlayWhenReady(exoPlayerPlayState);
     }
 
     private void releasePlayer() {
