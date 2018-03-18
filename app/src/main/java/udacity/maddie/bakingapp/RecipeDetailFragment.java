@@ -22,6 +22,13 @@ public class RecipeDetailFragment extends Fragment {
 
     private RecyclerView stepsRecyclerView;
 
+    private LinearLayoutManager layoutManager;
+
+    private static int stepIndex = -1;
+
+    private static int stepTop = -1;
+
+
     public RecipeDetailFragment() {
     }
 
@@ -70,7 +77,7 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void setUpRecipeSteps() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(getActivity());
         stepsRecyclerView.setLayoutManager(layoutManager);
         stepsRecyclerView.setAdapter(new RecipeStepAdapter(getActivity(), recipe.getSteps()));
     }
@@ -91,5 +98,22 @@ public class RecipeDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
+
+    @Override
+    public void onPause() {
+        stepIndex = layoutManager.findFirstVisibleItemPosition();
+        View v = stepsRecyclerView.getChildAt(0);
+        stepTop = (v == null) ? 0 : (v.getTop() - stepsRecyclerView.getPaddingTop());
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        if(stepIndex != -1) {
+            layoutManager.scrollToPositionWithOffset(stepIndex, stepTop);
+        }
+        super.onResume();
+    }
+
 
 }
