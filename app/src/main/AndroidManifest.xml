@@ -27,8 +27,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".RecipeDetailActivity">
+            android:parentActivityName=".RecipeGridActivity"
         </activity>
         <activity android:name=".RecipeStepDetailActivity">
+            android:parentActivityName=".RecipeDetailActivity"
         </activity>
         <activity android:name="udacity.maddie.bakingapp.RecipeWidgetConfigActivity">
             <intent-filter>

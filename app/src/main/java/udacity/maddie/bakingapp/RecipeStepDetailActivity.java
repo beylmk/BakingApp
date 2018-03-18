@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 /**
  * Created by rfl518 on 12/18/17.
@@ -32,6 +33,8 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements OnRec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_step_detail);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Log.e("RSDActivity", "RecipeStepDetailActivities's onCreate with " + savedInstanceState == null ? "null" : "non-null"
             + " savedInstanceState");
@@ -80,4 +83,17 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements OnRec
 
         super.onSaveInstanceState(outState);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                super.onBackPressed();
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }
